@@ -109,6 +109,21 @@ BINARY_PATH="$(pwd)/target/release/host"
 
 # Tes host (risc0-merkle-service)
 tampilkan_teks_warna "$CYAN" "🚀 Menjalankan host untuk tes..."
+# Pastikan port 3001 bebas
+tampilkan_teks_warna "$CYAN" "🔍 Memeriksa port 3001..."
+PORT_CHECK=$(netstat -tulnp | grep 3001)
+if [ -n "$PORT_CHECK" ]; then
+    tampilkan_teks_warna "$RED" "⚠️ Port 3001 sudah digunakan. Menghentikan proses yang ada..."
+    PID=$(netstat -tulnp | grep 3001 | awk '{print $7}' | cut -d'/' -f1)
+    sudo kill -9 $PID
+    sleep 2
+    if netstat -tulnp | grep 3001 > /dev/null; then
+        tampilkan_teks_warna "$RED" "❌ Gagal membebaskan port 3001. Hentikan proses secara manual."
+        exit 1
+    else
+        tampilkan_teks_warna "$GREEN" "✅ Port 3001 berhasil dibebaskan."
+    fi
+fi
 "$BINARY_PATH" > risc0-merkle-run.log 2>&1 &
 RISC0_PID=$!
 sleep 5
@@ -146,13 +161,42 @@ fi
 
 # Menghasilkan kunci publik dan privat
 tampilkan_teks_warna "$CYAN" "🔑 Menghasilkan kunci publik dan privat untuk CLI node..."
-# Jalankan light-node untuk menghasilkan kunci dan tangkap output
+# Pastikan risc0-merkle-service berjalan untuk ZK Prover
+tampilkan_teks_warna "$CYAN" "🚀 Memulai risc0-merkle-service untuk menghasilkan kunci..."
+# Pastikan port 3001 bebas lagi
+PORT_CHECK=$(netstat -tulnp | grep 3001)
+if [ -n "$PORT_CHECK" ]; then
+    tampilkan_teks_warna "$RED" "⚠️ Port 3001 sudah digunakan. Menghentikan proses yang ada..."
+    PID=$(netstat -tulnp | grep 3001 | awk '{print $7}' | cut -d'/' -f1)
+    sudo kill -9 $PID
+    sleep 2
+    if netstat -tulnp | grep 3001 > /dev/null; then
+        tampilkan_teks_warna "$RED" "❌ Gagal membebaskan port 3001. Hentikan proses secara manual."
+        exit 1
+    else
+        tampilkan_teks_warna "$GREEN" "✅ Port 3001 berhasil dibebaskan."
+    fi
+fi
+"$BINARY_PATH" > risc0-merkle-run.log 2>&1 &
+RISC0_PID=$!
+sleep 5
+if ! ps -p $RISC0_PID > /dev/null; then
+    tampilkan_teks_warna "$RED" "❌ risc0-merkle-service gagal berjalan. Lihat risc0-merkle-run.log"
+    cat risc0-merkle-run.log
+    exit 1
+fi
+
+# Jalankan light-node untuk menghasilkan kunci
 ./light-node > keygen.log 2>&1 &
 KEYGEN_PID=$!
-sleep 5
+sleep 60  # Beri waktu lebih lama untuk memastikan kunci dihasilkan
 kill -15 $KEYGEN_PID
-# Asumsikan light-node mencetak kunci dalam format "Public Key: <pubkey>" dan "Private Key: <privkey>"
-PUBLIC_KEY=$(grep -oP "Public Key: \K.*" keygen.log || echo "Gagal menemukan kunci publik")
+kill -15 $RISC0_PID
+sleep 2
+pkill -9 -f r0vm  # Hentikan proses r0vm sisa
+
+# Ekstrak kunci dari log
+PUBLIC_KEY=$(grep -oP "Compressed Public Key: \K.*" keygen.log || echo "Gagal menemukan kunci publik")
 PRIVATE_KEY=$(grep -oP "Private Key: \K.*" keygen.log || echo "Gagal menemukan kunci privat")
 if [ "$PUBLIC_KEY" != "Gagal menemukan kunci publik" ] && [ "$PRIVATE_KEY" != "Gagal menemukan kunci privat" ]; then
     echo "Kunci Publik: $PUBLIC_KEY" > keys.txt
@@ -164,8 +208,19 @@ if [ "$PUBLIC_KEY" != "Gagal menemukan kunci publik" ] && [ "$PRIVATE_KEY" != "G
 else
     tampilkan_teks_warna "$RED" "❌ Gagal menghasilkan kunci. Lihat keygen.log untuk detail."
     cat keygen.log
-    tampilkan_teks_warna "$CYAN" "⚠️ Anda perlu membuat kunci secara manual dan memperbarui PRIVATE_KEY di .env."
-    exit 1
+    if [ "$PUBLIC_KEY" != "Gagal menemukan kunci publik" ]; then
+        echo "Kunci Publik: $PUBLIC_KEY" > keys.txt
+        tampilkan_teks_warna "$GREEN" "✅ Kunci publik ditemukan dan disimpan di $(pwd)/keys.txt"
+        tampilkan_teks_warna "$CYAN" "⚠️ Kunci privat tidak ditemukan. Ikuti langkah berikut untuk menghasilkan secara manual:"
+        tampilkan_teks_warna "$CYAN" "1. Jalankan: openssl ecparam -name secp256k1 -genkey -noout -out privkey.pem"
+        tampilkan_teks_warna "$CYAN" "2. Ekstrak kunci privat: openssl ec -in privkey.pem -text -noout | grep -A 3 'priv:' | tail -n 3 | tr -d ' \n:'"
+        tampilkan_teks_warna "$CYAN" "3. Masukkan kunci privat ke .env pada PRIVATE_KEY="
+    else
+        tampilkan_teks_warna "$CYAN" "⚠️ Tidak ada kunci yang ditemukan. Anda perlu membuat kunci secara manual:"
+        tampilkan_teks_warna "$CYAN" "1. Jalankan: openssl ecparam -name secp256k1 -genkey -noout -out privkey.pem"
+        tampilkan_teks_warna "$CYAN" "2. Ekstrak kunci privat: openssl ec -in privkey.pem -text -noout | grep -A 3 'priv:' | tail -n 3 | tr -d ' \n:'"
+        tampilkan_teks_warna "$CYAN" "3. Masukkan kunci privat ke .env pada PRIVATE_KEY="
+    fi
 fi
 
 # Tambahkan pengecekan flag --ci-mode untuk GitHub Actions

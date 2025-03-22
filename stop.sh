@@ -19,9 +19,17 @@ if [ "$(id -u)" != "0" ]; then
 fi
 
 tampilkan_teks_warna "$CYAN" "⏹️ Menghentikan layanan light-node..."
-systemctl stop light-node.service && tampilkan_teks_warna "$GREEN" "✅ Layanan light-node berhasil dihentikan" || { tampilkan_teks_warna "$RED" "❌ Gagal menghentikan light-node"; exit 1; }
+if systemctl stop light-node.service; then
+    tampilkan_teks_warna "$GREEN" "✅ Layanan light-node berhasil dihentikan"
+else
+    tampilkan_teks_warna "$RED" "⚠️ Gagal menghentikan light-node atau layanan tidak ada"
+fi
 
 tampilkan_teks_warna "$CYAN" "⏹️ Menghentikan layanan risc0-merkle-service..."
-systemctl stop risc0-merkle-service.service && tampilkan_teks_warna "$GREEN" "✅ Layanan risc0-merkle-service berhasil dihentikan" || { tampilkan_teks_warna "$RED" "❌ Gagal menghentikan risc0-merkle-service"; exit 1; }
+if systemctl stop risc0-merkle-service.service; then
+    tampilkan_teks_warna "$GREEN" "✅ Layanan risc0-merkle-service berhasil dihentikan"
+else
+    tampilkan_teks_warna "$RED" "⚠️ Gagal menghentikan risc0-merkle-service atau layanan tidak ada"
+fi
 
-tampilkan_teks_warna "$GREEN" "✅ Semua layanan telah dihentikan."
+tampilkan_teks_warna "$GREEN" "✅ Proses penghentian selesai."
