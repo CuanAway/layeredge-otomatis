@@ -22,11 +22,24 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt update
-        sudo apt install -y git curl build-essential
+        sudo apt install -y git curl build-essential libssl-dev pkg-config xz-utils cmake ninja-build
+
+    - name: Install Rust
+      run: |
+        curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain nightly
+        source $HOME/.cargo/env
+        rustup target add riscv32im-risc0-zkvm-elf --toolchain nightly
+
+    - name: Install Risc0
+      run: |
+        curl -L https://risczero.com/install | bash
+        rzup install cargo-risczero
+        rzup install
 
     - name: Run install script
       run: |
-        sudo bash install.sh
+        chmod +x install.sh
+        sudo ./install.sh --ci-mode
 
     - name: Upload keys as artifact
       uses: actions/upload-artifact@v3
