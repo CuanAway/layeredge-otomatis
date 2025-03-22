@@ -25,6 +25,7 @@ Script otomatis untuk menginstal, mengelola, dan menghapus node LayerEdge dari C
 - `uninstall.sh`: Menghapus node dan layanan.
 - `.github/workflows/ci.yml`: Konfigurasi CI untuk GitHub Actions.
 - `README.md`: Dokumentasi ini.
+```
 
 ## Tutorial Instalasi
 
@@ -34,6 +35,7 @@ Unduh kode dari GitHub ke VPS Anda:
 git clone https://github.com/CuanAway/layeredge-otomatis.git
 cd layeredge-otomatis
 ```
+
 
 ### Langkah 2: Beri Izin Eksekusi
 Buat semua skrip dapat dieksekusi:
@@ -252,4 +254,3 @@ Terima kasih telah menggunakan CuanAway LayerEdge Otomatis! Jika ada masalah, bu
 4. **Verifikasi di GitHub**:
    - Buka [https://github.com/CuanAway/layeredge-otomatis](https://github.com/CuanAway/layeredge-otomatis).
    - Pastikan `README.md` tampil dengan benar dan semua file ada.
-```
