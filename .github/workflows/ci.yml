@@ -1,0 +1,35 @@
+name: CI for LayerEdge Otomatis
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.21.6'
+
+    - name: Install dependencies
+      run: |
+        sudo apt update
+        sudo apt install -y git curl build-essential
+
+    - name: Run install script
+      run: |
+        sudo bash install.sh
+
+    - name: Upload keys as artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: node-keys
+        path: light-node/keys.txt
