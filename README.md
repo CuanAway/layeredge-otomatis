@@ -1,22 +1,21 @@
-```markdown
 # CuanAway LayerEdge Otomatis
 
 Script otomatis untuk menginstal, mengelola, dan menghapus node LayerEdge dari CuanAway di sistem berbasis Ubuntu/Debian. Dibuat untuk mempermudah pengguna dalam menjalankan node dengan konfigurasi yang stabil dan terintegrasi ke dashboard LayerEdge.
 
 ## Fitur
-- **Instalasi Otomatis**: Menginstal dependensi (Go, Rust, Risc0), `light-node`, dan `risc0-merkle-service`.
-- **Layanan Systemd**: Menjalankan node dan prover sebagai layanan untuk uptime maksimal.
-- **Pembuatan Kunci**: Menghasilkan kunci publik untuk CLI dan opsi manual untuk kunci privat.
-- **Manajemen Port**: Menangani konflik port 3001 secara otomatis.
-- **Skrip Utilitas**: Termasuk `stop.sh`, `restart.sh`, dan `uninstall.sh` untuk pengelolaan node.
-- **CI GitHub Actions**: Otomatisasi pengujian dan penyimpanan kunci sebagai artifact.
-- **Antarmuka Ramah**: Logo ASCII "CUANAWAY" dengan teks berwarna untuk pengalaman visual.
+- Instalasi Otomatis: Menginstal dependensi (Go, Rust, Risc0), `light-node`, dan `risc0-merkle-service`.
+- Layanan Systemd: Menjalankan node dan prover sebagai layanan untuk uptime maksimal.
+- Pembuatan Kunci: Menghasilkan kunci publik untuk CLI dan opsi manual untuk kunci privat.
+- Manajemen Port: Menangani konflik port 3001 secara otomatis.
+- Skrip Utilitas: Termasuk `stop.sh`, `restart.sh`, dan `uninstall.sh` untuk pengelolaan node.
+- CI GitHub Actions: Otomatisasi pengujian dan penyimpanan kunci sebagai artifact.
+- Antarmuka Ramah: Logo ASCII "CUANAWAY" dengan teks berwarna untuk pengalaman visual.
 
 ## Prasyarat
-- **OS**: Ubuntu/Debian (disarankan Ubuntu 20.04 atau lebih baru).
-- **Akses Root**: Jalankan semua skrip dengan `sudo`.
-- **Spesifikasi Minimum**: 4 vCPU, 8GB RAM, 50GB SSD (berdasarkan VPS Anda).
-- **Koneksi Internet**: Stabil untuk mengunduh dependensi dan sinkronisasi node.
+- OS : Ubuntu/Debian (disarankan Ubuntu 20.04 atau lebih baru).
+- Akses Root : Jalankan semua skrip dengan `sudo`.
+- Spesifikasi Minimum : 4 vCPU, 8GB RAM, 50GB SSD (berdasarkan VPS Anda).
+- Koneksi Internet : Stabil untuk mengunduh dependensi dan sinkronisasi node.
 
 ## Struktur Repositori
 - `install.sh`: Skrip utama untuk instalasi.
@@ -25,7 +24,7 @@ Script otomatis untuk menginstal, mengelola, dan menghapus node LayerEdge dari C
 - `uninstall.sh`: Menghapus node dan layanan.
 - `.github/workflows/ci.yml`: Konfigurasi CI untuk GitHub Actions.
 - `README.md`: Dokumentasi ini.
-```
+
 
 ## Tutorial Instalasi
 
