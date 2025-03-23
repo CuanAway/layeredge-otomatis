@@ -14,7 +14,7 @@ Script otomatis untuk menginstal, mengelola, dan menghapus node LayerEdge dari C
 ## Prasyarat
 - OS : Ubuntu/Debian (disarankan Ubuntu 20.04 atau lebih baru).
 - Akses Root : Jalankan semua skrip dengan `sudo`.
-- Spesifikasi Minimum : 4 vCPU, 8GB RAM, 50GB SSD (berdasarkan VPS Anda).
+- Spesifikasi Minimum : 4 vCPU, 8GB RAM, 50GB SSD.
 - Koneksi Internet : Stabil untuk mengunduh dependensi dan sinkronisasi node.
 
 ## Struktur Repositori
